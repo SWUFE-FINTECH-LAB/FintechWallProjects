@@ -27,7 +27,7 @@ class DataService:
         fx = await self.provider.fetch_fx()
         rates = await self.provider.fetch_rates()
         commodities = await self.provider.fetch_commodities()
-        crypto = await self.provider.fetch_crypto()
+        us_stocks = await self.provider.fetch_us_stocks()
         calendar = await self.provider.fetch_calendar()
 
         payload = {
@@ -38,7 +38,7 @@ class DataService:
             "fx": fx,
             "rates": rates,
             "commodities": commodities,
-            "crypto": crypto,
+            "us_stocks": us_stocks,
             "calendar": calendar,
         }
 

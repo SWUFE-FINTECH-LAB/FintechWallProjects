@@ -26,8 +26,8 @@ class MarketDataProvider(ABC):
         """Return commodities snapshot (energy/metals)."""
 
     @abstractmethod
-    async def fetch_crypto(self) -> Mapping[str, Any]:
-        """Return crypto spot + derivatives summary."""
+    async def fetch_us_stocks(self) -> Mapping[str, Any]:
+        """Return US stock market data including indices and major stocks."""
 
     @abstractmethod
     async def fetch_calendar(self) -> list[Mapping[str, Any]]:
@@ -49,7 +49,7 @@ class NullProvider(MarketDataProvider):
     async def fetch_commodities(self) -> Mapping[str, Any]:
         return {}
 
-    async def fetch_crypto(self) -> Mapping[str, Any]:
+    async def fetch_us_stocks(self) -> Mapping[str, Any]:
         return {}
 
     async def fetch_calendar(self) -> list[Mapping[str, Any]]:

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A股市场大屏 - 现代版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/a-shares-modern.css" />
+</head>
+<body>
+    <div id="app" class="a-shares-dashboard">
+        <!-- 背景效果 -->
+        <div class="bg-effects">
+            <div class="grid-overlay"></div>
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+
+        <!-- 顶部导航栏 -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <rect x="4" y="20" width="4" height="8" fill="#00ff88"/>
+                            <rect x="10" y="16" width="4" height="12" fill="#00ff88"/>
+                            <rect x="16" y="12" width="4" height="16" fill="#ff4757"/>
+                            <rect x="22" y="8" width="4" height="20" fill="#ff4757"/>
+                            <rect x="28" y="4" width="4" height="24" fill="#00ff88"/>
+                        </svg>
+                    </div>
+                    <span class="logo-text">A股市场大屏</span>
+                </div>
+                <div class="market-status">
+                    <div class="status-indicator pulse" id="market-status-indicator"></div>
+                    <span class="status-text" id="market-status-text">交易中</span>
+                </div>
+            </div>
+
+            <div class="ticker-container">
+                <div class="ticker-content" id="marquee">
+                    <span class="ticker-item">正在加载A股市场数据...</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="time-display">
+                    <div class="time-label">北京时间</div>
+                    <div class="time-value" id="current-time">--:--:--</div>
+                </div>
+                <div class="connection-status" id="connection-indicator">
+                    <div class="status-dot pulse"></div>
+                    <span class="status-text">实时</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容区 -->
+        <main class="main-container">
+            <!-- 市场概览卡片 -->
+            <section class="market-overview">
+                <div class="overview-grid">
+                    <!-- 上证综指 -->
+                    <div class="index-card primary" id="sh-composite">
+                        <div class="card-header">
+                            <h3 class="index-name">上证综指</h3>
+                            <span class="index-code">000001.SH</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="index-value">
+                                <span class="value-main">--</span>
+                                <span class="value-decimal">.--</span>
+                            </div>
+                            <div class="index-changes">
+                                <span class="change-amount">--</span>
+                                <span class="change-percent">--%</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="stat-item">
+                                <span class="stat-label">成交量</span>
+                                <span class="stat-value">--亿</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">成交额</span>
+                                <span class="stat-value">--亿</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 深证成指 -->
+                    <div class="index-card" id="sz-composite">
+                        <div class="card-header">
+                            <h3 class="index-name">深证成指</h3>
+                            <span class="index-code">399001.SZ</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="index-value">
+                                <span class="value-main">--</span>
+                                <span class="value-decimal">.--</span>
+                            </div>
+                            <div class="index-changes">
+                                <span class="change-amount">--</span>
+                                <span class="change-percent">--%</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="stat-item">
+                                <span class="stat-label">成交量</span>
+                                <span class="stat-value">--亿</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">成交额</span>
+                                <span class="stat-value">--亿</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 创业板指 -->
+                    <div class="index-card" id="chinext">
+                        <div class="card-header">
+                            <h3 class="index-name">创业板指</h3>
+                            <span class="index-code">399006.SZ</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="index-value">
+                                <span class="value-main">--</span>
+                                <span class="value-decimal">.--</span>
+                            </div>
+                            <div class="index-changes">
+                                <span class="change-amount">--</span>
+                                <span class="change-percent">--%</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="stat-item">
+                                <span class="stat-label">成交量</span>
+                                <span class="stat-value">--亿</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">成交额</span>
+                                <span class="stat-value">--亿</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 科创50 -->
+                    <div class="index-card" id="star50">
+                        <div class="card-header">
+                            <h3 class="index-name">科创50</h3>
+                            <span class="index-code">000688.SH</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="index-value">
+                                <span class="value-main">--</span>
+                                <span class="value-decimal">.--</span>
+                            </div>
+                            <div class="index-changes">
+                                <span class="change-amount">--</span>
+                                <span class="change-percent">--%</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="stat-item">
+                                <span class="stat-label">成交量</span>
+                                <span class="stat-value">--亿</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">成交额</span>
+                                <span class="stat-value">--亿</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 数据面板区 -->
+            <section class="data-panels">
+                <!-- 左侧面板 - 其他指数 -->
+                <div class="panel left-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">主要指数</h2>
+                        <div class="panel-controls">
+                            <button class="control-btn active">实时</button>
+                            <button class="control-btn">日K</button>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="indices-list" id="indices-list">
+                            <!-- 动态生成指数列表 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 中间面板 - 市场热力图 -->
+                <div class="panel center-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">板块热力图</h2>
+                        <div class="panel-controls">
+                            <select class="select-control" id="heatmap-type">
+                                <option value="sector">行业板块</option>
+                                <option value="concept">概念板块</option>
+                                <option value="region">地区板块</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="heatmap-container" id="sector-heatmap">
+                            <!-- 动态生成热力图 -->
+                            <div class="heatmap-placeholder">
+                                <svg width="100%" height="400" viewBox="0 0 800 400">
+                                    <defs>
+                                        <linearGradient id="gradient-up" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#00ff88;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#00b894;stop-opacity:1" />
+                                        </linearGradient>
+                                        <linearGradient id="gradient-down" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#ff4757;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#d63031;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- 示例板块 -->
+                                    <rect x="10" y="10" width="150" height="80" fill="url(#gradient-up)" rx="8"/>
+                                    <text x="85" y="45" text-anchor="middle" fill="white" font-size="14" font-weight="600">银行</text>
+                                    <text x="85" y="65" text-anchor="middle" fill="white" font-size="18">+2.35%</text>
+
+                                    <rect x="170" y="10" width="150" height="80" fill="url(#gradient-down)" rx="8"/>
+                                    <text x="245" y="45" text-anchor="middle" fill="white" font-size="14" font-weight="600">房地产</text>
+                                    <text x="245" y="65" text-anchor="middle" fill="white" font-size="18">-1.82%</text>
+
+                                    <rect x="330" y="10" width="150" height="80" fill="url(#gradient-up)" rx="8"/>
+                                    <text x="405" y="45" text-anchor="middle" fill="white" font-size="14" font-weight="600">新能源</text>
+                                    <text x="405" y="65" text-anchor="middle" fill="white" font-size="18">+3.21%</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧面板 - 涨跌分布 -->
+                <div class="panel right-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">市场统计</h2>
+                    </div>
+                    <div class="panel-content">
+                        <!-- 涨跌分布 -->
+                        <div class="market-stats">
+                            <h3 class="stats-title">涨跌分布</h3>
+                            <div class="stats-chart">
+                                <div class="stat-bar up" style="width: 45%">
+                                    <span class="bar-label">上涨</span>
+                                    <span class="bar-value">2156</span>
+                                </div>
+                                <div class="stat-bar neutral" style="width: 10%">
+                                    <span class="bar-label">平盘</span>
+                                    <span class="bar-value">482</span>
+                                </div>
+                                <div class="stat-bar down" style="width: 45%">
+                                    <span class="bar-label">下跌</span>
+                                    <span class="bar-value">2148</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 涨停跌停 -->
+                        <div class="limit-stats">
+                            <div class="limit-item">
+                                <div class="limit-icon up-limit"></div>
+                                <div class="limit-info">
+                                    <span class="limit-label">涨停</span>
+                                    <span class="limit-value">68</span>
+                                </div>
+                            </div>
+                            <div class="limit-item">
+                                <div class="limit-icon down-limit"></div>
+                                <div class="limit-info">
+                                    <span class="limit-label">跌停</span>
+                                    <span class="limit-value">12</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 资金流向 -->
+                        <div class="money-flow">
+                            <h3 class="stats-title">北向资金</h3>
+                            <div class="flow-item">
+                                <span class="flow-label">净流入</span>
+                                <span class="flow-value positive">+128.5亿</span>
+                            </div>
+                            <div class="flow-progress">
+                                <div class="progress-bar" style="width: 65%"></div>
+                            </div>
+                        </div>
+
+                        <!-- 相关市场 -->
+                        <div class="related-markets">
+                            <h3 class="stats-title">相关市场</h3>
+                            <div class="market-list">
+                                <div class="market-item">
+                                    <span class="market-name">恒生指数</span>
+                                    <span class="market-value up">+1.25%</span>
+                                </div>
+                                <div class="market-item">
+                                    <span class="market-name">日经225</span>
+                                    <span class="market-value down">-0.82%</span>
+                                </div>
+                                <div class="market-item">
+                                    <span class="market-name">美元指数</span>
+                                    <span class="market-value up">+0.15%</span>
+                                </div>
+                                <div class="market-item">
+                                    <span class="market-name">黄金期货</span>
+                                    <span class="market-value up">+0.68%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 底部数据区 -->
+            <section class="bottom-section">
+                <!-- 大宗商品 -->
+                <div class="commodity-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">大宗商品</h2>
+                    </div>
+                    <div class="commodity-grid" id="commodities-grid">
+                        <!-- 动态生成商品数据 -->
+                    </div>
+                </div>
+
+                <!-- 外汇市场 -->
+                <div class="fx-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">外汇市场</h2>
+                    </div>
+                    <div class="fx-grid" id="fx-grid">
+                        <!-- 动态生成外汇数据 -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 系统状态栏 -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <div class="status-item">
+                    <span class="status-label">数据源:</span>
+                    <span class="status-value" id="data-source">Wind API</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">更新频率:</span>
+                    <span class="status-value">30秒</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">最后更新:</span>
+                    <span class="status-value" id="last-update">--:--:--</span>
+                </div>
+            </div>
+            <div class="status-right">
+                <div class="status-item">
+                    <span class="status-label">系统状态:</span>
+                    <span class="status-value healthy" id="system-status">正常</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">延迟:</span>
+                    <span class="status-value" id="latency">12ms</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="scripts/a-shares.js"></script>
+</body>
+</html>

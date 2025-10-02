@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wind Financial Market Wallboard - Modern</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/wallboard-modern.css" />
+</head>
+<body>
+    <div id="app" class="wallboard-modern">
+        <!-- Background Effects -->
+        <div class="bg-effects">
+            <div class="grid-overlay"></div>
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+
+        <!-- Top Navigation & Marquee -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon"></div>
+                    <span class="logo-text">Wind Financial</span>
+                </div>
+                <div class="scene-indicator">
+                    <div class="scene-dots">
+                        <div class="dot active" data-scene="a"></div>
+                        <div class="dot" data-scene="b"></div>
+                        <div class="dot" data-scene="c"></div>
+                        <div class="dot" data-scene="d"></div>
+                        <div class="dot" data-scene="e"></div>
+                    </div>
+                    <div class="scene-label" id="current-scene-label">Global Overview</div>
+                </div>
+            </div>
+            <div class="marquee-ticker">
+                <div class="ticker-content" id="marquee">
+                    <span class="ticker-item">Loading market data...</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="time-display" id="current-time">--:--:--</div>
+                <div class="connection-status" id="connection-status">
+                    <div class="status-dot"></div>
+                    <span class="status-text">Live</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Container -->
+        <main class="main-container">
+            <!-- Scene A: Global Market Overview -->
+            <section id="scene-a" class="scene active">
+                <div class="scene-header">
+                    <h1 class="scene-title">
+                        <span class="title-accent">A</span>
+                        <span class="title-text">Global Market Overview</span>
+                    </h1>
+                    <div class="last-update" id="scene-time"></div>
+                </div>
+
+                <div class="scene-content">
+                    <!-- Key Metrics Cards -->
+                    <div class="metrics-row">
+                        <div class="metric-card" id="market-sentiment">
+                            <div class="card-header">
+                                <h3>Market Sentiment</h3>
+                                <div class="card-icon sentiment-icon"></div>
+                            </div>
+                            <div class="metric-grid">
+                                <div class="metric-item up">
+                                    <span class="metric-value" id="advancing-count">-</span>
+                                    <span class="metric-label">Advancing</span>
+                                </div>
+                                <div class="metric-item down">
+                                    <span class="metric-value" id="declining-count">-</span>
+                                    <span class="metric-label">Declining</span>
+                                </div>
+                                <div class="metric-item neutral">
+                                    <span class="metric-value" id="unchanged-count">-</span>
+                                    <span class="metric-label">Unchanged</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card" id="global-indices">
+                            <div class="card-header">
+                                <h3>Global Indices</h3>
+                                <div class="card-icon indices-icon"></div>
+                            </div>
+                            <div class="indices-mini-grid" id="indices-mini">
+                                <div class="loading-spinner">Loading indices...</div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card" id="fx-overview">
+                            <div class="card-header">
+                                <h3>Foreign Exchange</h3>
+                                <div class="card-icon fx-icon"></div>
+                            </div>
+                            <div class="fx-mini-grid" id="fx-mini">
+                                <div class="loading-spinner">Loading FX...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Data Display -->
+                    <div class="data-display">
+                        <div class="data-panel main-indices">
+                            <div class="panel-header">
+                                <h3>A-Share Major Indices</h3>
+                                <div class="view-toggle">
+                                    <button class="toggle-btn active">Grid</button>
+                                    <button class="toggle-btn">Chart</button>
+                                </div>
+                            </div>
+                            <div class="panel-content">
+                                <div class="indices-detailed-grid" id="indices-detailed">
+                                    <div class="loading-spinner">Loading detailed indices...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scene B: Market Heatmap -->
+            <section id="scene-b" class="scene">
+                <div class="scene-header">
+                    <h1 class="scene-title">
+                        <span class="title-accent">B</span>
+                        <span class="title-text">Market Heatmap</span>
+                    </h1>
+                </div>
+                <div class="scene-content">
+                    <div class="heatmap-container">
+                        <div class="heatmap-grid" id="equity-heat">
+                            <div class="loading-spinner">Loading heatmap...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scene C: Macro & Rates -->
+            <section id="scene-c" class="scene">
+                <div class="scene-header">
+                    <h1 class="scene-title">
+                        <span class="title-accent">C</span>
+                        <span class="title-text">Macro & Interest Rates</span>
+                    </h1>
+                </div>
+                <div class="scene-content">
+                    <div class="macro-grid">
+                        <div class="data-panel rates-panel">
+                            <div class="panel-header">
+                                <h3>Government Bonds</h3>
+                            </div>
+                            <div class="panel-content">
+                                <div class="rates-grid" id="rates-grid">
+                                    <div class="loading-spinner">Loading rates...</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="data-panel commodities-panel">
+                            <div class="panel-header">
+                                <h3>Commodities</h3>
+                            </div>
+                            <div class="panel-content">
+                                <div class="commodities-grid" id="commodities-grid">
+                                    <div class="loading-spinner">Loading commodities...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scene D: US Markets -->
+            <section id="scene-d" class="scene">
+                <div class="scene-header">
+                    <h1 class="scene-title">
+                        <span class="title-accent">D</span>
+                        <span class="title-text">US Markets Deep Dive</span>
+                    </h1>
+                </div>
+                <div class="scene-content">
+                    <div class="us-markets-container">
+                        <div class="us-stocks-grid" id="us-stocks-grid">
+                            <div class="loading-spinner">Loading US stocks...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scene E: News & Alerts -->
+            <section id="scene-e" class="scene">
+                <div class="scene-header">
+                    <h1 class="scene-title">
+                        <span class="title-accent">E</span>
+                        <span class="title-text">Market News & Alerts</span>
+                    </h1>
+                </div>
+                <div class="scene-content">
+                    <div class="news-container">
+                        <div class="news-feed" id="news-banner">
+                            <div class="news-item">
+                                <span class="news-time">Live</span>
+                                <span class="news-content">Market data updating...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- System Status Panel -->
+        <aside class="status-panel">
+            <div class="status-header">
+                <h3>System Status</h3>
+                <div class="status-indicator" id="system-health"></div>
+            </div>
+            <div class="status-content">
+                <div class="status-item">
+                    <span class="status-label">Data Source</span>
+                    <span class="status-value" id="status-data-mode">Wind API</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Last Update</span>
+                    <span class="status-value" id="status-last-update">--:--:--</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Connection</span>
+                    <span class="status-value" id="status-connection">Connecting...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Data Freshness</span>
+                    <span class="status-value" id="status-freshness">Waiting...</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script type="module" src="scripts/wallboard.js"></script>
+</body>
+</html>
