@@ -186,6 +186,13 @@ class RollingScreenController {
         minutes: document.getElementById("countdown-minutes"),
         seconds: document.getElementById("countdown-seconds"),
       },
+      dataSources: {
+        global: document.getElementById("global-source"),
+        rates: document.getElementById("rates-source"),
+        commodities: document.getElementById("commodity-source"),
+        alt: document.getElementById("alt-source"),
+        events: document.getElementById("events-source"),
+      },
     };
   }
 
@@ -319,6 +326,11 @@ class RollingScreenController {
     this.renderRegions(snapshot);
     this.renderLeaders(snapshot);
     this.renderUsFocus(snapshot);
+    this.updateDataSource(
+      "global",
+      "开放数据 · 腾讯/Stooq 指数",
+      this.hasIndexData(snapshot)
+    );
   }
 
   renderRegions(snapshot) {
@@ -533,6 +545,7 @@ class RollingScreenController {
   renderMacroScene(snapshot) {
     const rates = snapshot?.rates ?? {};
     const fx = snapshot?.fx ?? {};
+    let rateEntries = [];
 
     if (this.elements.ratesList) {
       const orderedCodes = [
@@ -547,7 +560,7 @@ class RollingScreenController {
         "SONIA.IR",
         "EFFR.IR",
       ];
-      const rateEntries = orderedCodes
+      rateEntries = orderedCodes
         .map((code) => [code, rates[code]])
         .filter(([, data]) => data && typeof data === "object");
 
@@ -567,6 +580,12 @@ class RollingScreenController {
             .join("")
         : `<div class="rate-row">暂无利率数据</div>`;
     }
+
+    this.updateDataSource(
+      "rates",
+      "开放数据 · 利率/收益率（FRED + 中国债市）",
+      rateEntries.length > 0
+    );
 
     this.renderYieldCurves(rates);
 
@@ -605,10 +624,12 @@ class RollingScreenController {
 
   renderCommoditiesScene(snapshot) {
     const commodities = snapshot?.commodities ?? {};
+    const commodityEntries = Object.entries(commodities).filter(
+      ([, data]) => data && typeof data === "object"
+    );
     if (this.elements.commodityGroups) {
       const grouped = {};
-      Object.entries(commodities).forEach(([code, data]) => {
-        if (!data || typeof data !== "object") return;
+      commodityEntries.forEach(([code, data]) => {
         const sector = this.getCommoditySector(code);
         grouped[sector] = grouped[sector] ?? [];
         grouped[sector].push({ code, data });
@@ -648,9 +669,7 @@ class RollingScreenController {
     }
 
     if (this.elements.commodityNotes) {
-      const items = Object.entries(commodities).filter(
-        ([, data]) => data && typeof data === "object"
-      );
+      const items = commodityEntries;
       if (!items.length) {
         this.elements.commodityNotes.innerHTML = `<p>等待大宗商品行情...</p>`;
         return;
@@ -685,12 +704,19 @@ class RollingScreenController {
 
       this.elements.commodityNotes.innerHTML = notes.map((n) => `<p>${n}</p>`).join("");
     }
+
+    this.updateDataSource(
+      "commodities",
+      "开放数据 · Yahoo 期货",
+      commodityEntries.length > 0
+    );
   }
 
   renderAltScene(snapshot) {
     const crypto = snapshot?.crypto ?? {};
     const fx = snapshot?.fx ?? {};
     const commodities = snapshot?.commodities ?? {};
+    const modeLabel = this.currentModeLabel();
 
     if (this.elements.altCrypto) {
       const cryptoEntries = Object.entries(crypto)
@@ -792,6 +818,16 @@ class RollingScreenController {
         )
         .join("");
     }
+
+    const hasAltData =
+      (crypto && Object.keys(crypto).length > 0) ||
+      (fx && Object.keys(fx).length > 0) ||
+      (commodities && Object.keys(commodities).length > 0);
+    this.updateDataSource(
+      "alt",
+      `${modeLabel} · 数字资产/汇率/避险`,
+      hasAltData
+    );
   }
 
   renderEventsScene(snapshot) {
@@ -839,6 +875,11 @@ class RollingScreenController {
     }
 
     this.startCountdown(upcoming?.eventDate ?? null);
+    this.updateDataSource(
+      "events",
+      "开放数据 · Nasdaq / FXStreet / ForexFactory",
+      upcomingEvents.length > 0
+    );
   }
 
   renderCoreIndices(snapshot) {
@@ -979,6 +1020,13 @@ class RollingScreenController {
       .join("");
 
     this.elements.ticker.innerHTML = items;
+  }
+
+    this.updateDataSource(
+      "events",
+      "开放数据 · Nasdaq / FXStreet / ForexFactory",
+      upcomingEvents.length > 0
+    );
   }
 
   setConnectionStatus(connected) {
@@ -1126,6 +1174,47 @@ class RollingScreenController {
 
   isNumber(value) {
     return typeof value === "number" && !Number.isNaN(value);
+  }
+
+  hasIndexData(snapshot) {
+    const indices = snapshot?.indices ?? {};
+    return Object.values(indices).some((item) => item && typeof item === "object");
+  }
+
+  currentModeLabel() {
+    const mode = (this.cache.snapshot?.data_mode ?? "open").toString().toLowerCase();
+    if (mode === "open") return "开放数据";
+    if (mode === "wind") return "Wind";
+    if (mode === "mock") return "Mock";
+    return mode.toUpperCase();
+  }
+
+  formatFreshnessLabel() {
+    if (!this.lastUpdate || Number.isNaN(this.lastUpdate.getTime())) {
+      return "--:--:--";
+    }
+    const label = this.lastUpdate.toLocaleTimeString("zh-CN", {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    const diffSec = Math.max(0, Math.round((Date.now() - this.lastUpdate.getTime()) / 1000));
+    const lag =
+      diffSec < 60
+        ? `${diffSec}s`
+        : `${Math.floor(diffSec / 60)}m${String(diffSec % 60).padStart(2, "0")}s`;
+    return `${label} · 延迟 ${lag}`;
+  }
+
+  updateDataSource(key, label, hasData) {
+    const el = this.elements.dataSources?.[key];
+    if (!el) return;
+    const text = `${label} | 模式 ${this.currentModeLabel()} | 更新时间 ${this.formatFreshnessLabel()}`;
+    el.textContent = hasData
+      ? text
+      : `${text} | 暂无最新数据，等待源或使用缓存`;
+    el.classList.toggle("muted", !hasData);
   }
 
   splitValue(value) {
